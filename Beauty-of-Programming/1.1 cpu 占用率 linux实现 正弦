@@ -1,0 +1,41 @@
+#define _GNU_SOURCE // must be in the first line
+#include <stdio.h> 
+#include <stdlib.h>
+#include <math.h>
+#include <sys/time.h>
+#include <sched.h>
+const int PERIOD = 200;
+const int INTERVAL = 100000;//why can't be 100ms?
+const double SPLIT = 0.01;
+const double PI = 3.14;
+int main(void){
+	cpu_set_t my_set;        /* Define your cpu_set bit mask. */
+	CPU_ZERO(&my_set);       /* Initialize it all to 0, i.e. no CPUs selected. */
+	CPU_SET(0, &my_set);     /* set the bit that represents core 0. */
+                                                  /* the defined mask, i.e. only 7. */
+	sched_setaffinity(0, sizeof(cpu_set_t), &my_set); /* Set affinity of tihs process to */
+    double radian = 0.0;
+    long  busySpan[PERIOD];
+    long  idleSpan[PERIOD];
+    for(int i = 0 ; i < PERIOD; i++){
+	busySpan[i] = INTERVAL*(0.5 + 0.5*sin(PI*radian));
+	idleSpan[i] = INTERVAL - busySpan[i];
+	radian += SPLIT;
+    }
+    int j = 0;
+    long start, end;
+    while(1){
+    	struct timeval tv;
+	gettimeofday(&tv,NULL);
+	start = tv.tv_sec*1000000 + tv.tv_usec;
+	end = start;
+	while((end - start) < busySpan[j]){
+	    gettimeofday(&tv,NULL);
+	    end = tv.tv_sec*1000000 + tv.tv_usec;
+	    // printf("busy:%d\n",busySpan[j]);
+	}
+	usleep(idleSpan[j]);
+	// printf("idle:%d\n",idleSpan[j]);
+	j = (j+1)%PERIOD;
+    }
+}
