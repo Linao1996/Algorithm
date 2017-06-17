@@ -1,0 +1,19 @@
+#include <stdio.h> 
+#include <stdlib.h> 
+#include <sys/time.h>
+#include <unistd.h>
+const long long SPAN = 10000;
+int main(void){
+    struct timeval tv;
+    long long start, end;
+    while(1){
+	gettimeofday(&tv,NULL);
+	start = tv.tv_sec * 1000000 + tv.tv_usec;
+	end = start;
+	while((end - start)<SPAN){
+	    gettimeofday(&tv,NULL);
+	    end = tv.tv_sec *1000000 + tv.tv_usec;
+	}
+	usleep(SPAN);
+    }
+}
