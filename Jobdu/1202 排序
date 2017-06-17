@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int main(void) {
+    int n;
+    int buf[100];
+    while (scanf("%d", &n) != EOF) {
+        for (int i = 0; i < n; i++) {
+            scanf("%d", &buf[i]);
+        }
+        int i, j;
+        for (i = 1; i < n; i++) {
+            int temp = buf[i];
+            //注意插入排序与冒泡是不同的！冒泡是相邻比较，插入始终是何当前处理元素
+            for (j = i; j > 0 && buf[j - 1] > temp; j--) {// j - 1 rather than j; > temp rather than buf[j]
+                buf[j] = buf[j - 1];
+            }
+            buf[j] = temp;
+        }
+        for(int i = 0; i < n; i++){
+            printf("%d ",buf[i]);
+        }
+        printf("\n");
+
+    }
+
+}
