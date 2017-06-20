@@ -1,0 +1,41 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;//can't be deleted if to use sort() function
+
+struct data {
+    char info[100];
+    int age;
+    int grade;
+    bool operator < (const data &b) const {// 用不用引用符号有区别没？
+        if(grade != b.grade){
+            return grade < b.grade;
+        }
+        int temp = strcmp(info,b.info);
+        if(temp != 0){
+            return temp < 0;
+        }
+        else{
+            return age < b.age;
+        }
+    }
+}buf[1000];
+
+
+int main(void) {
+    int n;
+    while (scanf("%d", &n) != EOF) {
+
+        for (int i = 0; i < n; i++) {
+            scanf("%s%d%d", buf[i].info, &buf[i].age, &buf[i].grade);
+        }
+        sort(buf, buf);
+        for (int j = 0; j < n; j++) {
+            printf("%s %d %d\n", buf[j].info, buf[j].age, buf[j].grade);
+        }
+
+    }
+
+}
