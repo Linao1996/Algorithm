@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;//can't be deleted if to use sort() function
+
+int main(void) {
+    int max, n;
+    int *data;
+    while (scanf("%d", &n) != EOF) {
+        data = (int *) malloc(sizeof(int) * n);
+        for (int i = 0; i < n; i++) {
+            scanf("%d", data + i);
+        }
+        sort(data, data + n);
+        max = data[n - 1];
+        sort(data, data + n - 1);
+        printf("%d\n", max);
+        if (n != 1) {
+            int i;
+            for (i = 0; i < n - 2; i++) {
+                printf("%d ", data[i]);// if you just print data[i] to n - 1, then there would be redundant space in the end;
+                
+            }
+            printf("%d",data[i]);//don't need to plus one
+        }
+        else{
+            printf("%d",-1);
+        }
+        printf("\n");
+    }
+}
