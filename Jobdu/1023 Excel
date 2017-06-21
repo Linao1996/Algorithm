@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;//can't be deleted if to use sort() function
+
+struct Info {
+    int id;
+    char name[100];
+    int grade;
+} buf[100000];
+
+bool cmp1(Info data1, Info data2) {
+    return data1.id < data2.id;
+}
+
+bool cmp2(Info data1, Info data2) {
+    int temp = strcmp(data1.name, data2.name);
+    if (temp == 0) {
+        return data1.id < data2.id;
+    } else {
+        return temp < 0;
+    }
+}
+
+bool cmp3(Info data1, Info data2) {
+    if (data1.grade == data2.grade) {
+        return data1.id < data2.id;
+    } else {
+        return data1.grade < data2.grade;
+    }
+}
+
+int main(void) {
+    int n, column;
+    int count = 0;
+    while (scanf("%d%d", &n, &column) != EOF) {
+        count++;
+        if (n == 0) {
+            return -1;
+        }
+        for (int i = 0; i < n; i++) {
+            scanf("%d%s%d", &buf[i].id, buf[i].name, &buf[i].grade);//如果name是未曾初始化的指针那就有bug了
+        }
+        switch (column) {
+            case 1:
+                sort(buf, buf + n, cmp1);
+                break;
+            case 2:
+                sort(buf, buf + n, cmp2);
+                break;
+            case 3:
+                sort(buf, buf + n, cmp3);
+                break;
+            default:
+                break;
+        }
+        printf("Case %d:\n", count);
+        for (int i = 0; i < n; i++) {
+            printf("%06d %s %d\n", buf[i].id, buf[i].name, buf[i].grade);//用0补位的方法
+        }
+
+    }
+
+}
