@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+
+int isYear(int year) {
+    return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
+}
+
+int data[5000][13][32];
+int dayOfMonth[13][2]{
+        0, 0,
+        31, 31,
+        28, 29,
+        31, 31,
+        30, 30,
+        31, 31,
+        30, 30,
+        31, 31,
+        31, 31,
+        30, 30,
+        31, 31,
+        30, 30,
+        31, 31,
+};
+
+struct Date {
+    int year;
+    int month;
+    int day;
+
+    void nextDay() {
+        day++;
+        if (day > dayOfMonth[month][isYear(year)]) {
+            month++;
+            day = 1;
+        }
+        if (month > 12) {
+            year++;
+            month = 1;
+        }
+    }
+};
+
+int main(void) {
+    Date temp;
+    temp.year = 0;
+    temp.month = 0;
+    temp.day = 0;
+    int i = 0;
+    while (true) {
+        data[temp.year][temp.month][temp.day] = i++;
+        temp.nextDay();
+        if (temp.year == 5000 && temp.month == 12 && temp.day == 31) {
+            break;
+        }
+    }
+
+    int year1, month1, day1;
+    int year2, month2, day2;
+    int result;
+    while (scanf("%4d%2d%d", &year1, &month1, &day1) != EOF) {
+        scanf("%4d%2d%2d", &year2, &month2, &day2);
+        result = data[year1][month1][day1] - data[year2][month2][day2];
+        result = result < 0 ? -result : result;
+        printf("%d\n", result + 1);
+    }
+
+}
