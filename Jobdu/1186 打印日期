@@ -1,0 +1,78 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+int isYear(int year) {
+    return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+}
+
+int dayOfMonth[13][2] = {
+        0, 0,
+        31, 31,
+        28, 29,
+        31, 31,
+        30, 30,
+        31, 31,
+        30, 30,
+        31, 31,
+        31, 31,
+        30, 30,
+        31, 31,
+        30, 30,
+        31, 31,
+};
+
+struct Date {
+    int year;
+    int month;
+    int day;
+
+    void nextDay() {
+        day++;
+        if (day > dayOfMonth[month][isYear(year)]) {
+            day = 1;
+            month++;
+        }
+        if (month > 12) {
+            month = 1;
+            year++;
+        }
+    }
+};
+
+int buf[3001][13][32];
+//int buf[5000][13][32]  this way, you'll get SIGSEGV;
+//int buf[5001][13][31]  you still get the right answer;
+//int buf[5001][12][31]  you won't get SIGSEGV, but the answer is wrong
+
+// the point is,    SIGSEGV error happens when you access invalid memory. In the second
+// example, although day column has not enough space, it still has its place in month column
+// in the last example, the reason that there is no SIGSEGV is that the space overall is enough.;
+
+int main(void) {
+    int i = 0;
+    Date temp;
+    temp.day = 1;
+    temp.month = 1;
+    temp.year = 1;
+    while (true) {
+        buf[temp.year][temp.month][temp.day] = i++;
+        temp.nextDay();
+        if (temp.year == 3001) {
+            break;
+        }
+    }
+    int year, month, day, dayOfYear;
+    while (scanf("%d%d", &year, &dayOfYear) != EOF) {
+//        if(dayOfYear > (isYear(year) ? 366 : 365)){
+//            return -1;
+//        }
+        temp.year = year;
+        temp.month = 1;
+        temp.day = 1;
+        while (buf[temp.year][temp.month][temp.day] - buf[year][1][1] + 1 != dayOfYear) {
+            temp.nextDay();
+        }
+        printf("%04d-%02d-%02d\n", temp.year, temp.month, temp.day);//if not complemented with 0s, the answer would be wrong
+
+    }
+}
