@@ -1,0 +1,107 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <cstring>
+
+using namespace std;
+
+int isYear(int year) {
+    return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
+}
+
+int data[5000][13][32];
+char monthName[13][20]{
+        "",
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+};
+
+char weekName[7][20]{
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+};
+
+int dayOfMonth[13][2]{
+        0, 0,
+        31, 31,
+        28, 29,
+        31, 31,
+        30, 30,
+        31, 31,
+        30, 30,
+        31, 31,
+        31, 31,
+        30, 30,
+        31, 31,
+        30, 30,
+        31, 31,
+};
+
+struct Date {
+    int year;
+    int month;
+    int day;
+
+    void nextDay() {
+        day++;
+        if (day > dayOfMonth[month][isYear(year)]) {
+            month++;
+            day = 1;
+        }
+        if (month > 12) {
+            year++;
+            month = 1;
+        }
+    }
+};
+
+int getMonth(char *month) {
+    for (int i = 0; i < 13; i++) {
+        if (strcmp(month,monthName[i]) == 0) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+int main(void) {
+    Date temp;
+    temp.year = 0;
+    temp.month = 1;
+    temp.day = 1 ;
+    int i = 0;
+    while (true) {
+        data[temp.year][temp.month][temp.day] = i++;
+        temp.nextDay();
+        if (temp.year == 5000 && temp.month == 12 && temp.day == 31) {
+            break;
+        }
+    }
+
+    int year1, month1, day1;
+    char monthname1[20];
+    int result;
+    while (scanf("%d%s%d", &day1, monthname1, &year1) != EOF) {
+        month1 = getMonth(monthname1);
+        result = data[year1][month1][day1] - data[2017][6][19];
+        result +=1;
+        result = ((result % 7) + 7) % 7;
+        printf("%s\n", weekName[result]);
+    }
+
+}
