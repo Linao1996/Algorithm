@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <algorithm>
+
+using namespace std;
+
+bool isExtre(int buf[], int index, int n) {
+    if (index == 0) {
+        return buf[index] != buf[index + 1];
+    } else if (index == n - 1) {
+        return buf[index] != buf[index - 1];
+    } else {
+        return buf[index] > buf[index + 1] && buf[index] > buf[index - 1] ||
+               buf[index] < buf[index - 1] && buf[index] < buf[index + 1];
+    }
+}
+
+int main(void) {
+    int buf[80];
+    int arrayCount;
+    while (scanf("%d", &arrayCount) != EOF) {
+        for (int i = 0; i < arrayCount; i++) {
+            int elemCount;
+            scanf("%d", &elemCount);
+            for (int j = 0; j < elemCount; j++) {
+                scanf("%d", &buf[j]);
+            }
+            int num = 0;
+            for (int j = 0; j < elemCount; j++) {
+                if (isExtre(buf, j, elemCount)) {
+                    num++;
+                }
+            }
+            for (int j = 0; j < elemCount; j++) {
+                if (isExtre(buf, j, elemCount)) {
+                    if (--num) {
+                        printf("%d ", j);
+                    } else {
+                        printf("%d", j);
+                    }
+                }
+            }
+            printf("\n");
+        }
+    }
+}
