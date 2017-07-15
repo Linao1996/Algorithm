@@ -1,0 +1,31 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <algorithm>
+
+using namespace std;
+
+int Pi[100];
+
+int main(void) {
+    int groups;
+    while (scanf("%d", &groups) != EOF) {
+        for (int i = 0; i < groups; i++) {
+            int n, V, W;
+            int resultV = 0;
+            float resultW = 0.0;
+            scanf("%d%d%d", &n, &V, &W);
+            for (int j = 0; j < n; j++) {
+                scanf("%d", &Pi[j]);
+            }
+            sort(Pi, Pi + n);
+            int j = 0;
+            while (j < n && ((resultW * (j)) + Pi[j]) / (j + 1) <= W) {
+                j++;
+                resultW = ((resultW * (j - 1)) + Pi[j - 1]) / j;
+                resultV += V;
+            }
+            resultW /= 100;
+            printf("%d %.2f\n", resultV, resultW);
+        }
+    }
+}
