@@ -1,0 +1,73 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <algorithm>
+#include <cmath>
+
+char buf[3000][3000];
+
+
+void makeOne(char buf[3000][3000], int left, int right, int bottom, int top, char ch, int N, int Q) {
+    if (left == right && bottom == top) {
+        buf[left][top] = ch;
+    }
+    for (int i = left; i <= right; i++) {
+        for (int j = bottom; j <= top; j++) {
+            buf[i][j] = ch;
+        }
+    }
+}
+
+void formPattern(char buf[3000][3000], int i, int j, int N, int Q, char ch) {
+    makeOne(buf, (int) (i * pow(N, Q - 1)), (int) ((i + 1) * pow(N, Q - 1) - 1),
+            (int) (j * pow(N, Q - 1)),
+            (int) ((j + 1) * pow(N, Q - 1) - 1), ch, N, Q);
+}
+
+int main(void) {
+    int N, Q;
+    int size;
+    char tem[5][6];
+    char ch;
+    while (scanf("%d\n", &N) != EOF) {
+        if (N == 0) {
+            return -1;
+        }
+        for (int i = 0; i < N; i++) {//what's the  better way to deal with input like this?
+            for (int j = 0; j < N + 1; j++) {// to deal with /n
+                scanf("%c", &tem[i][j]);
+            }
+        }
+//        for (int i = 0; i < N; i++) {
+//            for (int j = 0; j < N; j++) {
+//                printf("%c", tem[i][j]);
+//            }
+//            printf("\n");
+//        }
+        scanf("%d", &Q);
+        printf("%d\n", Q);
+        size = (int) pow(N, Q);
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (tem[i][j] != ' ') {
+                    ch = tem[i][j];
+                    formPattern(buf, i, j, N, Q, ch);
+//                    makeOne(buf, (int) (i * pow(N, Q - 1)), (int) ((i + 1) * pow(N, Q - 1) - 1),
+//                            (int) (j * pow(N, Q - 1)),
+//                            (int) ((j + 1) * pow(N, Q - 1) - 1), ch, N, Q);
+                } else {
+                    makeOne(buf, (int) (i * pow(N, Q - 1)), (int) ((i + 1) * pow(N, Q - 1) - 1),
+                            (int) (j * pow(N, Q - 1)),
+                            (int) ((j + 1) * pow(N, Q - 1) - 1), ' ', N, Q);
+                }
+            }
+        }
+        for (int i = size - 1; i >= 0; i--) {
+            for (int j = 0; j < size; j++) {
+                printf("%c", buf[i][j]);
+            }
+            printf("\n");
+        }
+
+
+    }
+}
