@@ -1,0 +1,31 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <algorithm>
+
+using namespace std;
+
+int blocks[600];
+
+int main(void) {
+    long L;
+    int n;
+    while (scanf("%ld%d", &L, &n) != EOF) {
+        int i;
+        for (i = 0; i < n; i++) {
+            scanf("%d", &blocks[i]);
+        }
+        sort(blocks, blocks + n);
+        while (i >= 0 && L > 0) {
+            L -= blocks[--i];
+        }
+        if(i == -1){
+            printf("impossible\n");
+        }
+        else{
+            printf("%d\n",n - i);
+        }
+
+
+
+    }
+}
