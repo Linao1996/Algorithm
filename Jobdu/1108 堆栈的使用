@@ -1,0 +1,43 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <stack>
+#include <cstring>
+#include <iostream>
+
+using namespace std;
+
+int main(void) {
+    stack<int> S;
+    int n;
+    char c;
+    int rand;
+    while (scanf("%d\n", &n) != EOF) {
+        if (n == 0) {
+            return -1;
+        }
+        while (!S.empty()) {
+            S.pop();
+        }
+        for (int i = 0; i < n; i++) {
+//            scanf("%c\n", &c); // cin的输入忽略空格和回车。scanf("%c",&i)等价于i = getchar()，换行符和回车都会被读入。
+            cin >> c;//avoiding read spaces or \n in to c;
+            if (c == 'P') {
+                scanf("%d", &rand);//if using scanf, then you have to code this as : scanf("%d\n",&rand);
+                S.push(rand);
+            } else if (c == 'O') {
+                if (!S.empty()) {
+                    S.pop();
+                }
+            } else if(c == 'A') {
+                if (S.empty()) {
+                    printf("E\n");
+                } else {
+                    printf("%d\n", S.top());
+                }
+            }
+        }
+        printf("\n");
+    }
+
+}
+
