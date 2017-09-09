@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <vector>
+
+#define MAX 999999999
+using namespace std;
+
+bool mark[100010];
+int dist[100010];
+int last[100010];
+
+struct Edge {
+    int next;
+    int dist;
+};
+
+int dst;
+vector<Edge> edges[200010];
+
+
+int min(int a, int b) {
+    return a < b ? a : b;
+}
+
+int max(int a, int b) {
+    return a > b ? a : b;
+}
+
+
+int res = MAX;
+
+int DFS(int n) {
+    int result = MAX;
+    int tmpDist;
+    for (int i = 0; i < edges[n].size(); i++) {
+        int thisDist = edges[n][i].dist;
+        int thisNext = edges[n][i].next;//        if (thisDist >= res) {
+//            continue;
+//        }
+        if (!mark[thisNext]) {
+//            printf("%d\t",thisNext);
+            if (thisNext == dst) {
+                result = min(result, thisDist);
+//                printf("%d\t",result);
+            } else {
+                mark[thisNext] = true;
+                tmpDist = DFS(thisNext);
+                mark[thisNext] = false;
+                thisDist = max(thisDist, tmpDist);
+                result = min(result, thisDist);
+//                printf("%d\t",result);
+            }
+        }
+    }
+    return result;
+}
+
+int main(void) {
+    int n, m;
+    int a, b, c;
+    Edge edge;
+    scanf("%d%d", &n, &m);
+    dst = n;
+    for (int i = 1; i <= n; i++) {
+        mark[i] = false;
+        last[i] = MAX;
+        dist[i] = MAX;
+    }
+
+    for (int i = 1; i <= m; i++) {
+        edges[i].clear();
+    }
+    for (int i = 0; i < m; i++) {
+        scanf("%d%d%d", &a, &b, &c);
+        edge.next = b;
+        edge.dist = c;
+        edges[a].push_back(edge);
+        edge.next = a;
+        edge.dist = c;
+        edges[b].push_back(edge);
+    }
+    mark[1] = true;
+//    for (int i = 0; i < edges[1].size(); i++) {
+//        int thisDist = edges[1][i].dist;
+//        int thisNext = edges[1][i].next;
+//        mark[thisNext] = true;
+//        int tmpRes = DFS(thisNext);
+//        printf("tmpres:%d\n",tmpRes);
+//        tmpRes = max(thisDist, tmpRes);
+//        printf("tmpRes2:%d\n",tmpRes);
+//        res = min(res, tmpRes);
+//    }
+    int res = DFS(1);
+    printf("%d\n", res);
+}
+//6 7
+//1 2 4
+//2 3 4
+//3 6 7
+//1 4 2
+//4 5 5
+//5 6 6
+//2 6 5
