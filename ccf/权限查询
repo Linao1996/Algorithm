@@ -1,0 +1,211 @@
+#include <stdio.h>
+#include <algorithm>
+#include <string>
+#include <iostream>
+
+using namespace std;
+
+int p, r, u, q;
+struct Auth {
+    string name;
+    int level;
+};
+
+struct Type {
+    string name;
+    Auth auths[10];
+    int authNum;
+};
+
+struct User {
+    string name;
+    Type types[10];
+    int typeNum;
+};
+
+Auth auths[101];
+Type types[101];
+User users[101];
+
+int findAuths(string name) {
+    for (int i = 0; i < p; i++) {
+        if (auths[i].name == name) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int findTypes(string name) {
+    for (int i = 0; i < r; i++) {
+        if (types[i].name == name) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int findUsers(string name) {
+    for (int i = 0; i < u; i++) {
+        if (users[i].name == name) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+Auth getAuth(string auth) {
+    Auth tmpAuth;
+    unsigned long pos;
+    if ((pos = auth.find(":")) != string::npos) {
+        string name = auth.substr(0, pos);
+        int level = auth[auth.length() - 1] - '0';
+        tmpAuth.name = name;
+        tmpAuth.level = level;
+    } else {
+        tmpAuth.name = auth;
+        tmpAuth.level = -1;
+    }
+}
+
+Type getType(string type) {
+    Type tmpType;
+    unsigned long pos;
+    pos = type.find(" ");
+    int authNum = type[pos + 1] - '0';
+    tmpType.authNum = authNum;
+    tmpType.name = type.substr(0, pos - 1);
+
+    string remains = type.substr(pos + 3, type.length() - 1);
+    if (authNum == 1) {
+        Auth auth = getAuth(remains);
+        tmpType.auths[0] = auth;
+    } else {
+        for (int i = 0; i < authNum - 1; i++) {
+            pos = type.find(" ");
+            Auth auth = getAuth(remains.substr(0, pos - 1));
+            tmpType.auths[i] = auth;
+            remains = remains.substr(pos + 1, remains.length() - 1);
+        }
+        tmpType.auths[authNum - 1] = getAuth(remains);
+    }
+}
+
+User getUser(string user) {
+    User tmpUser;
+    string remains;
+    int typeNum;
+    unsigned long pos;
+    pos = user.find(" ");
+    tmpUser.name = user.substr(0, pos - 1);
+    tmpUser.typeNum = user[pos + 1] - '0';
+    remains = user.substr(pos + 3, user.length() - 1);
+    if (tmpUser.typeNum == 1) {
+        int index = findTypes(remains);
+        tmpUser.types[0] = types[index];
+    } else {
+        for (int i = 0; i < tmpUser.typeNum - 1; i++) {
+            pos = remains.find(" ");
+            int index = findTypes(remains.substr(0, pos - 1));
+            tmpUser.types[i] = types[index];
+            remains = remains.substr(pos + 1, remains.length() - 1);
+        }
+        int index = findTypes(remains);
+        tmpUser.types[tmpUser.typeNum - 1] = types[index];
+    }
+}
+
+bool typeHasAuth(Type type, Auth auth) {
+    for (int i = 0; i < type.authNum; i++) {
+        if (type.auths[i].name == auth.name && type.auths[i].level >= auth.level) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool userHasAuth(User user, Auth auth) {
+    for (int i = 0; i < user.typeNum; i++) {
+        if(typeHasAuth(user.types[i],auth)){
+            return true;
+        }
+    }
+    return false;
+}
+
+int findLevel(User user, Auth auth) {
+//    if()
+    return -99;
+
+}
+
+int main(void) {
+    scanf("%d", &q);
+    string auth;
+    unsigned long pos;
+    for (int i = 0; i < q; i++) {
+        cin >> auth;
+        auths[i] = getAuth(auth);
+    }
+    cin >> r;
+    string type;
+    for (int i = 0; i < r; i++) {
+        cin >> type;
+        types[i] = getType(type);
+    }
+    cin >> u;
+    string username;
+    for (int i = 0; i < u; i++) {
+        cin >> username;
+        users[i] = getUser(username);
+    }
+    cin >> q;
+    for (int i = 0; i < q; i++) {
+        string toAsk;
+        string toName;
+        string toAuth;
+        string toAuthName;
+        int toAuthLevel = -1;
+        cin >> toAsk;
+        pos = toAsk.find(" ");
+        toName = toAsk.substr(0, pos - 1);
+        toAuth = toAsk.substr(pos + 1, toAsk.length() - 1);
+        pos = toAuth.find(":");
+        if (pos == string::npos) {
+            toAuthName = toAuth;
+            toAuthLevel = -1;
+        } else {
+            toAuthName = toAuth.substr(0, pos - 1);
+            toAuthLevel = toAuth[toAuth.length() - 1] - '0';
+        }
+
+
+        int userIndex;
+        userIndex = findUsers(toName);
+        int authIndex;
+        authIndex = findAuths(toAuthName);
+
+        bool toJudge = true;
+
+        if (userIndex == -1) {
+            printf("false\n");
+            continue;
+        }
+        if (authIndex == -1) {
+            printf("false\n");
+            continue;
+        }
+        if (auths[authIndex].level != -1 && toAuthLevel == -1) {
+            toJudge = false;
+        }
+        if (toJudge) {
+            if (userHasAuth(users[userIndex], auths[authIndex])) {
+                printf("true\n");
+            } else {
+                printf("false\n");
+            }
+        } else {
+            printf("%d\n", findLevel(users[userIndex], auths[authIndex]));
+        }
+    }
+}
