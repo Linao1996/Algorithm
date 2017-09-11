@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <iostream>
+
+using namespace std;
+
+int before[15][10];
+int after[15][10];
+int block[4][4];
+
+void printResult() {
+    for (int i = 0; i < 15; i++) {
+        for (int j = 0; j < 9; j++) {
+            printf("%d ", after[i][j]);
+        }
+        printf("%d ", after[i][9]);
+        printf("\n");
+    }
+}
+
+int main(void) {
+    for (int i = 0; i < 15; i++) {
+        for (int j = 0; j < 10; j++) {
+            cin >> before[i][j];
+            after[i][j] = before[i][j];
+        }
+    }
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            cin >> block[i][j];
+        }
+    }
+    int begin;
+    cin >> begin;
+    begin -= 1;
+    int line;
+    bool find = false;
+    int t;
+    for (line = 0; line <= 14; line++) {
+        t = line > 11 ? 14 - line : 3;
+        for (int i = 0; i <= t; i++) {
+            for (int j = 0; j <= 3; j++) {
+                if (before[line + i][begin + j] == 1 && block[i][j] == 1) {
+                    find = true;
+                    goto here;
+                }
+                if (block[i][j] == 1 && i + line == 14) {
+                    goto here;
+                }
+            }
+        }
+    }
+    here:
+    if (find) {
+        line--;
+    }
+    t = line > 11 ? 14 - line : 3;
+    for (int i = 0; i <= t; i++) {
+        for (int j = 0; j <= 3; j++) {
+            if (block[i][j] == 1) {
+                after[line + i][begin + j] = 1;
+            }
+        }
+    }
+    printResult();
+}
+//
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0 0 0 0 0 0 0
+//0 0 0 0
+//0 1 1 1
+//0 0 0 1
+//0 0 0 0
+//3
