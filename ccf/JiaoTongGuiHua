@@ -1,0 +1,118 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+#define  MAX 999999999//nine 9 is fair enough!
+using namespace std;
+
+
+
+struct Edge {
+    int tag;
+    int next;
+    int dist;
+};
+
+vector<Edge> edges[10010];
+
+int path[10010];
+bool markPoint[10010];
+bool markEdge[100010];
+int dist[10010];
+int result = 0;
+int markResult[10010];
+
+void addDist(int node) {
+//    printf("node:%d\t", node);
+//    printf("path:%d\n", path[node]);
+    if (node == 1 || markResult[node]) {
+        return;
+    }
+    for (int j = 0; j < edges[node].size(); j++) {
+        if (edges[node][j].next == path[node]) {
+            if (!markEdge[edges[node][j].tag]) {
+                markEdge[edges[node][j].tag] = true;
+                markResult[node] = true;
+                result += edges[node][j].dist;
+//                printf("result:%d\n",result);
+                addDist(path[node]);
+            }
+            return;
+        }
+    }
+}
+
+int main(void) {
+    int n, m;
+    cin >> n >> m;
+
+    //initialization
+    for (int i = 1; i <= n; i++) {
+        path[i] = -1;
+        markPoint[i] = false;
+        markResult[i] = false;
+        dist[i] = MAX;
+    }
+    for (int i = 0; i < m; i++) {
+        markEdge[i] = false;
+    }
+
+    //get input
+    for (int i = 0; i < m; i++) {
+        int a, b, c;
+        cin >> a >> b >> c;
+        Edge edge;
+        edge.tag = i;
+        edge.next = a;
+        edge.dist = c;
+        edges[b].push_back(edge);
+        edge.next = b;
+        edges[a].push_back(edge);
+    }
+
+    //Dijkstra algorithm
+    int newP = 1;
+    int tmpNext = -1;
+    int tmpDist = MAX;
+    dist[newP] = 0;
+    markPoint[newP] = true;
+    for (int i = 0; i < n - 1; i++) {
+        for (int j = 0; j < edges[newP].size(); j++) {
+            tmpNext = edges[newP][j].next;
+            tmpDist = edges[newP][j].dist;
+            if (!markPoint[tmpNext] && dist[tmpNext] >= tmpDist + dist[newP]) {
+                if (dist[tmpNext] == tmpDist + dist[newP] && dist[newP] > dist[path[tmpNext]]) {
+                    path[tmpNext] = newP;
+                } else {
+                    dist[tmpNext] = tmpDist + dist[newP];
+                    path[tmpNext] = newP;
+                }
+//                printf("newP:%d,next:%d\n",newP,tmpNext);
+            }
+        }
+        int minDist = MAX;
+        for (int j = 1; j <= n; j++) {
+            if (!markPoint[j] && dist[j] < minDist) {
+                minDist = dist[j];
+                newP = j;
+            }
+        }
+        markPoint[newP] = true;
+    }
+
+    for (int j = 2; j <= n; j++) {
+        addDist(j);
+    }
+    printf("%d\n", result);
+}
+
+//5 8
+//1 2 4
+//1 3 5
+//2 3 2
+//2 4 3
+//3 4 2
+//5 4 1
+//5 1 30
+//5 3 2
