@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+string current;
+
+
+vector<string> formVector(string name) {
+    vector<string> tmpVector;
+    tmpVector.clear();
+    string tmpName;
+    unsigned long posStart;
+    unsigned long posEnd;
+    posStart = name.find("/", 0);
+    posEnd = name.find("/", posStart + 1);
+    while (posEnd != string::npos) {
+        tmpName = name.substr(posStart + 1, posEnd - posStart - 1);
+        tmpVector.push_back(tmpName);
+        posStart = posEnd;
+        posEnd = name.find("/", posStart + 1);
+    }
+    tmpName = name.substr(posStart + 1, name.size() - posStart - 1);
+    tmpVector.push_back(tmpName);
+    return tmpVector;
+}
+
+vector<string> deal(vector<string> nameVector) {
+    for (int i = 0; i < nameVector.size(); i++) {
+        string tmpName = nameVector[i];
+        if (tmpName == ".") {
+            nameVector.erase(nameVector.begin() + i, nameVector.begin() + i + 1);
+            i -= 1;// is this necessary?
+        } else if (tmpName == "..") {
+            if (i != 0) {
+                nameVector.erase(nameVector.begin() + i - 1, nameVector.begin() + i + 1);
+                i -= 2;
+            } else {
+                nameVector.erase(nameVector.begin() + i, nameVector.begin() + i + 1);
+                i -= 1;
+            }
+        }
+    }
+    return nameVector;
+
+}
+
+string formName(vector<string> nameVector) {
+    string result = "/";
+    for (int i = 0; i < nameVector.size() - 1; i++) {
+        result += nameVector[i];
+        result += "/";
+    }
+    result += nameVector[nameVector.size() - 1];
+
+    return result;
+}
+
+string standard(string name) {
+    /* 1. directory end with / --->delete /
+     * 2.using working directory --->change it into absolute address
+     * 3.multiple / --->delete redundant /
+     * 4.using . or .. --->change it into
+     * 5.empty --->return working directory;
+     */
+
+    if (name.size() == 0) {
+        return current;
+    }
+
+    char lc = name[0];
+    char c;
+
+    for (int i = 1; i < name.size(); i++) {// delete multiple /
+        c = name[i];
+        if (c == '/' && lc == '/') {
+            name.erase((unsigned long) i, 1);
+            i -= 1;
+        } else {
+            lc = c;
+        }
+    }
+    if (name[name.size() - 1] == '/' && name.size() != 1) {
+        name.erase(name.size() - 1, 1);
+    }
+
+    if (name[0] != '/') {
+        name = current + "/" + name;
+    }
+    vector<string> nameVector;
+//    printf("%s\n", name.c_str());
+    nameVector = formVector(name);
+    nameVector = deal(nameVector);
+    name = formName(nameVector);
+    return name;
+
+}
+
+int main(void) {
+    int p;
+    cin >> p;
+    cin >> current;
+    string name;
+    string result;
+    for (int i = 0; i < p; i++) {
+        cin >> name;
+        result = standard(name);
+        printf("%s\n",result.c_str());
+    }
+}
