@@ -1,0 +1,91 @@
+#include <stdio.h>
+
+int before[30][30];
+int after[30][30];
+
+void clear(int n, int m) {
+    int lc, c;
+    for (int i = 0; i < n; i++) {
+        lc = before[i][0];
+        int count = 1;
+        int start = 0;
+        bool isFirst = true;
+        for (int j = 1; j < m; j++) {
+            c = before[i][j];
+            if (c == lc) {
+                count++;
+                if (isFirst) {
+                    start = j - 1;
+                    isFirst = false;
+                } else {
+                    //do nothing
+                }
+            } else {
+                if (count >= 3) {
+                    for (int z = start; z < start + count; z++) {
+                        after[i][z] = 0;
+                    }
+                }
+                lc = c;
+                isFirst = true;
+                count = 1;
+            }
+        }
+        if (count >= 3) {
+            for (int z = start; z < m; z++) {
+                after[i][z] = 0;
+            }
+        }
+    }
+    for (int j = 0; j < m; j++) {
+        lc = before[0][j];
+        int count = 1;
+        int start = 0;
+        bool isFirst = true;
+        for (int i = 1; i < n; i++) {
+            c = before[i][j];
+            if (c == lc) {
+                count++;
+                if (isFirst) {
+                    start = i - 1;
+                    isFirst = false;
+                } else {
+                    //do nothing
+                }
+            } else {
+                if (count >= 3) {
+                    for (int z = start; z < start + count; z++) {
+                        after[z][i] = 0;
+                    }
+                }
+                lc = c;
+                isFirst = true;
+                count = 1;
+            }
+        }
+        if (count >= 3) {
+            for (int y = start; y < n; y++) {
+                after[j][y] = 0;
+            }
+        }
+    }
+}
+
+int main(void) {
+    int n, m;
+    scanf("%d%d", &n, &m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            scanf("%d", &before[i][j]);
+            after[i][j] = before[i][j];
+        }
+    }
+    clear(n, m);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m - 1; j++) {
+            printf("%d ", after[i][j]);
+        }
+        printf("%d", after[i][m - 1]);
+        printf("\n");
+    }
+}
