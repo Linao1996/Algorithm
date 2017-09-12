@@ -1,0 +1,102 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+#include <queue>
+
+using namespace std;
+
+int offset[][2] = {
+        1, 0,
+        -1, 0,
+        0, 1,
+        0, -1,
+};
+
+struct Danger {
+    int start;
+    int end;
+};
+
+Danger dangers[101][10000];
+bool mark[101][10000];
+
+
+struct S {
+    int x;
+    int y;
+    int t;
+};
+
+queue<S> Q;
+
+bool isInDanger(int x, int y, int t) {
+    return t >= dangers[x][y].start && t <= dangers[x][y].end;
+}
+
+int BFS(int n, int m) {
+    while (!Q.empty()) {
+        S newS = Q.front();
+        Q.pop();
+        for (int i = 0; i < 4; i++) {
+            int x = newS.x + offset[i][0];
+            int y = newS.y + offset[i][1];
+            int t = newS.t + 1;
+            if (mark[x][y]) {
+                continue;
+            }
+            if (x < 1 || x > n || y < 1 || y > m) {
+                continue;
+            }
+            if (isInDanger(x, y, t)) {
+                continue;
+            }
+            S tmpS;
+            tmpS.x = x;
+            tmpS.y = y;
+            tmpS.t = t;
+            Q.push(tmpS);
+            if (newS.x == n && newS.y == m) {
+                return newS.t;
+            }
+
+        }
+    }
+    return -1;
+}
+
+int main(void) {
+    int n, m, t;
+    cin >> n >> m >> t;
+    //init
+    for (int i = 1; i <= n; i++) {
+        for (int j = 1; j <= m; j++) {
+            dangers[i][j].start = -1;
+            dangers[i][j].end = -1;
+            mark[i][j] = false;
+        }
+    }
+    while (!Q.empty()) {
+        Q.pop();
+    }
+
+    //input
+    int r, c, a, b;
+    for (int i = 0; i < t; i++) {
+        scanf("%d%d%d%d", &r, &c, &a, &b);
+        dangers[r][c].start = a;
+        dangers[r][c].end = b;
+    }
+
+    S s;
+    s.x = 1;
+    s.y = 1;
+    s.t = 0;
+    Q.push(s);
+    int result;
+    if (m == 1 && n == 1) {
+        result = 0;
+    } else {
+        result = BFS(n, m);
+    }
+    printf("%d\n", result);
+}
