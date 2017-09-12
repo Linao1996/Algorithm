@@ -1,91 +1,121 @@
 #include <stdio.h>
+#include <iostream>
+#include <string>
+#include <vector>
 
-int before[30][30];
-int after[30][30];
+using namespace std;
 
-void clear(int n, int m) {
-    int lc, c;
-    for (int i = 0; i < n; i++) {
-        lc = before[i][0];
-        int count = 1;
-        int start = 0;
-        bool isFirst = true;
-        for (int j = 1; j < m; j++) {
-            c = before[i][j];
-            if (c == lc) {
-                count++;
-                if (isFirst) {
-                    start = j - 1;
-                    isFirst = false;
-                } else {
-                    //do nothing
-                }
+string current;
+
+
+vector<string> formVector(string name) {
+    vector<string> tmpVector;
+    tmpVector.clear();
+    string tmpName;
+    unsigned long posStart;
+    unsigned long posEnd;
+    posStart = name.find("/", 0);
+    posEnd = name.find("/", posStart + 1);
+    while (posEnd != string::npos) {
+        tmpName = name.substr(posStart + 1, posEnd - posStart - 1);
+        tmpVector.push_back(tmpName);
+        posStart = posEnd;
+        posEnd = name.find("/", posStart + 1);
+    }
+    tmpName = name.substr(posStart + 1, name.size() - posStart - 1);
+    tmpVector.push_back(tmpName);
+    return tmpVector;
+}
+
+vector<string> deal(vector<string> nameVector) {
+    for (int i = 0; i < nameVector.size(); i++) {
+        string tmpName = nameVector[i];
+        if (tmpName == ".") {
+            nameVector.erase(nameVector.begin() + i, nameVector.begin() + i + 1);
+            i -= 1;// is this necessary?
+        } else if (tmpName == "..") {
+            if (i != 0) {
+                nameVector.erase(nameVector.begin() + i - 1, nameVector.begin() + i + 1);
+                i -= 2;
             } else {
-                if (count >= 3) {
-                    for (int z = start; z < start + count; z++) {
-                        after[i][z] = 0;
-                    }
-                }
-                lc = c;
-                isFirst = true;
-                count = 1;
-            }
-        }
-        if (count >= 3) {
-            for (int z = start; z < m; z++) {
-                after[i][z] = 0;
+                nameVector.erase(nameVector.begin() + i, nameVector.begin() + i + 1);
+                i -= 1;
             }
         }
     }
-    for (int j = 0; j < m; j++) {
-        lc = before[0][j];
-        int count = 1;
-        int start = 0;
-        bool isFirst = true;
-        for (int i = 1; i < n; i++) {
-            c = before[i][j];
-            if (c == lc) {
-                count++;
-                if (isFirst) {
-                    start = i - 1;
-                    isFirst = false;
-                } else {
-                    //do nothing
-                }
-            } else {
-                if (count >= 3) {
-                    for (int z = start; z < start + count; z++) {
-                        after[z][i] = 0;
-                    }
-                }
-                lc = c;
-                isFirst = true;
-                count = 1;
-            }
-        }
-        if (count >= 3) {
-            for (int y = start; y < n; y++) {
-                after[j][y] = 0;
-            }
+    return nameVector;
+
+}
+
+string formName(vector<string> nameVector) {
+    string result = "/";
+    for (int i = 0; i < nameVector.size() - 1; i++) {
+        result += nameVector[i];
+        result += "/";
+    }
+    result += nameVector[nameVector.size() - 1];
+
+    return result;
+}
+
+string standard(string name) {
+
+    /* 1. directory end with / --->delete /
+     * 2.using working directory --->change it into absolute address
+     * 3.multiple / --->delete redundant /
+     * 4.using . or .. --->change it into
+     * 5.empty --->return working directory;
+     */
+
+    if (name.size() == 0) {
+        return current;
+    }
+
+    char lc = name[0];
+    char c;
+
+    for (int i = 1; i < name.size(); i++) {// delete multiple /
+        c = name[i];
+        if (c == '/' && lc == '/') {
+            name.erase((unsigned long) i, 1);
+            i -= 1;
+        } else {
+            lc = c;
         }
     }
+    if (name[name.size() - 1] == '/' && name.size() != 1) {
+        name.erase(name.size() - 1, 1);
+    }
+
+    if (name[0] != '/') {
+        if (current == "/") {
+            name = current + name;
+        } else {
+            name = current + "/" + name;
+        }
+    }
+//    printf("try:%s\n", name.c_str());
+    vector<string> nameVector;
+    if (name == "/") {
+        return name;
+    }
+    nameVector = formVector(name);
+    nameVector = deal(nameVector);
+    name = formName(nameVector);
+    return name;
+
 }
 
 int main(void) {
-    int n, m;
-    scanf("%d%d", &n, &m);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m; j++) {
-            scanf("%d", &before[i][j]);
-            after[i][j] = before[i][j];
-        }
-    }
-    clear(n, m);
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < m - 1; j++) {
-            printf("%d ", after[i][j]);
-        }
-        printf("%d", after[i][m - 1]);
-        printf("\n");
+    int p;
+    cin >> p;
+    cin >> current;
+    cin.ignore();
+    string name;
+    string result;
+    for (int i = 0; i < p; i++) {
+        getline(cin, name);
+        result = standard(name);
+        printf("%s\n", result.c_str());
     }
 }
