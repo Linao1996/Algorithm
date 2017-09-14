@@ -25,7 +25,7 @@ void DFS(int n) {
             DFS(edges[n][i]);
         }
     }
-    S.push(n);
+    S.push(n); //逆后序： 在递归调用之后将顶点压入栈。逆后序就是后序的逆序。
 }
 
 int countSCC = 0;
