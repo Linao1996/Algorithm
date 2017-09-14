@@ -1,3 +1,6 @@
+
+cf.http://www.cnblogs.com/bethunebtj/p/4854946.html
+Kosaraju算法
 #include <stdio.h>
 #include<iostream>
 #include <algorithm>
