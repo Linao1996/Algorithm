@@ -15,14 +15,15 @@ struct Edge {
 int uf[1010];
 
 int findRoot(int n) {
-	while (uf[n] != -1) {
-		n = uf[n];
+	if (uf[n] == -1) {
+		return n;
 	}
-	return n;
+	
+	return findRoot(uf[n]);
 }
 
 
-Edge edges[1010];
+Edge edges[100010];
 
 int main() {
 	int n, m;
