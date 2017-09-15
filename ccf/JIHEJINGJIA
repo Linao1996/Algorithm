@@ -1,0 +1,140 @@
+#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+struct Bill {
+    int tag;//0 for sell,1 for buy, -1 for cancelled
+    double price;
+    int num;
+
+    bool operator<(const Bill &bill) const {
+        return price > bill.price;//decreasing!
+    }
+};
+
+Bill buy[5000];
+Bill sell[5000];
+
+string lines[5000];
+
+int buyCount = 0;
+int sellCount = 0;
+
+void analyze(string line) {
+//    printf("line:%s\n", line.c_str());
+    if (line.find("buy") != string::npos) {
+        string::size_type pos1 = line.find(" ");
+        string::size_type pos2 = line.find(" ", pos1 + 1);
+        double price = atof(line.substr(4, pos2 - 4).c_str());
+        int num = atoi(line.substr(pos2 + 1, line.size() - pos2 - 1).c_str());
+        buy[++buyCount].price = price;
+        buy[buyCount].num = num;
+    } else if (line.find("sell") != string::npos) {
+        string::size_type pos1 = line.find(" ");
+        string::size_type pos2 = line.find(" ", pos1 + 1);
+        double price = atof(line.substr(5, pos2 - 5).c_str());
+        int num = atoi(line.substr(pos2 + 1, line.size() - pos2 - 1).c_str());
+        sell[++sellCount].price = price;
+        sell[sellCount].num = num;
+    }
+}
+
+Bill bill[5000];
+int billCount = 0;
+
+int main(void) {
+    int count = 0;
+    char buf[20];
+//    while (getline(cin, lines[++count])) {// see how can we deal with this kind of input later;
+//        if (lines[count] == "") {
+//            count--;
+//            break;
+//        }
+//    }
+    string tmpLine;
+
+    while (scanf("%s",buf)!=EOF) {
+//        printf("%s\n",tmpLine.c_str());
+        double price;
+        int num;
+//        tmpLine = buf;
+        if (tmpLine == "buy") {
+            cin >> price >> num;
+            bill[++billCount].price = price;
+            bill[billCount].num = num;
+            bill[billCount].tag = 1;
+        } else if (tmpLine == "sell") {
+            cin >> price >> num;
+            bill[++billCount].price = price;
+            bill[billCount].num = num;
+            bill[billCount].tag = 0;
+        } else if (tmpLine == "cancel") {
+            int lineNum;
+            cin >> lineNum;
+            bill[lineNum].tag = -1;
+        }
+    }
+//    printf("here\n");
+    for (int i = 1; i <= billCount; i++) {
+        if (bill[i].tag == 0) {
+            sell[++sellCount] = bill[i];
+        } else if (bill[i].tag == 1) {
+            buy[++buyCount] = bill[i];
+        }
+    }
+
+//    for (int i = count; i >= 1; i--) {
+//        string line = lines[i];
+//        if (line.find("cancel") != string::npos) {
+//            unsigned long size = line.size();
+//            int num = atoi(line.substr(7, size - 7).c_str());
+////            printf("%d\n",num);
+//            lines[num] = "";//if the line canceled is a cancel sentence itself?
+//        }
+//    }
+//    for (int i = 1; i <= count; i++) {
+//        analyze(lines[i]);
+//    }
+    sort(buy + 1, buy + buyCount + 1);//!!we arrange number from 1 to n;
+    sort(sell + 1, sell + sellCount + 1);
+    double resultPrice;
+    int resultNum = 0;
+    int i = 1, j = 1;
+    while (i <= buyCount && j <= sellCount) {
+        if (buy[i].price >= sell[j].price) {
+            resultPrice = buy[i].price;
+            if (buy[i].num <= sell[j].num) {
+//                printf("before1:%d\t", resultNum);
+                resultNum += buy[i].num;
+//                printf("buy[%.2f]: %d\t", buy[i].price, buy[i].num);
+//                printf("after1:%d\n", resultNum);
+                sell[j].num -= buy[i].num;
+                i++;
+            } else {
+//                printf("before2:%d\t", resultNum);
+                resultNum += sell[j].num;
+//                printf("after2:%d\n", resultNum);
+                buy[i].num -= sell[i].num;
+                j++;
+            }
+        } else {
+            j++;
+        }
+    }
+    printf("%.2f ", resultPrice);
+    printf("%d\n", resultNum);
+}
+//buy 9.25 100/
+//buy 8.88 175
+//sell 9.00 1000
+//buy 8.91 400
+//sell 8.92 400
+//cancel 1
+//buy 100.00 50/
+//cancel 7
+//buy 11 300/
+//sell 50 10
+//buy 90 40
