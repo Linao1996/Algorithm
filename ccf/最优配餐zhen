@@ -1,0 +1,148 @@
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <queue>
+#include <cstring>
+
+#define MAX 999999
+using namespace std;
+
+
+int offset[][2] = {
+	1,0,
+	-1,0,
+	0,1,
+	0,-1,
+};
+
+struct Shop {
+	int x;
+	int y;
+};
+
+struct Bill {
+	int x;
+	int y;
+	int num;
+};
+
+struct Danger {
+	int x;
+	int y;
+};
+
+struct Node {
+	int x;
+	int y;
+	int dist;
+};
+
+Shop shops[1000010];
+Bill bills[1000010];
+Danger dangers[1000010];
+
+queue<Node> Q;
+int grid[1010][1010];
+bool mark[1010][1010];
+
+int n, m, k, d;
+
+bool isDanger(int a, int b) {
+	for (int i = 1; i <= d; i++) {
+		if (dangers[i].x == a && dangers[i].y == b) {
+			return true;
+		}
+	}
+	return false;
+
+}
+bool isFound(int x, int y) {
+	for (int i = 1; i <= m; i++) {
+		if (shops[i].x == x && shops[i].y == y) {
+			return true;
+		}
+	}
+	return false;
+
+}
+int  BFS() {
+	while (!Q.empty()) {
+		Node node = Q.front();
+		Q.pop();
+		for (int i = 0; i < 4; i++) {
+			int x = node.x + offset[i][0];
+			int y = node.y + offset[i][1];
+			int dist = node.dist + 1;
+			if (x > n || x < 1 || y > n || y < 1) {
+				continue;
+			}
+			if (mark[x][y]) {
+				continue;
+			}
+			if (isDanger(x, y)) {
+				continue;
+			}
+			if (isFound(x, y)) {
+				return dist;
+			}
+			Node tmpNode;
+			tmpNode.x = x;
+			tmpNode.y = y;
+			tmpNode.dist = dist;
+			mark[x][y] = true;
+			Q.push(tmpNode);
+		}
+	}
+	return -1;
+}
+
+int main() {
+	while (scanf("%d%d%d%d", &n, &m, &k, &d) != EOF) {
+		for (int i = 1; i <= n; i++) {
+			for (int j = 1; j <= n; j++) {
+				mark[i][j] = false;
+				grid[i][j] = MAX;
+			}
+		}
+
+		for (int i = 1; i <= m; i++) {
+			scanf("%d%d", &shops[i].x, &shops[i].y);
+		}
+		for (int i = 1; i <= k; i++) {
+			scanf("%d%d%d", &bills[i].x, &bills[i].y, &bills[i].num);
+		}
+		for (int i = 1; i <= d; i++) {
+			scanf("%d%d", &dangers[i].x, &dangers[i].y);
+		}
+		for (int i = 1; i <= k; i++) {
+			Node node;
+			node.x = bills[i].x;
+			node.y = bills[i].y;
+			node.dist = 0;
+			if (isFound(node.x, node.y)) {
+				grid[bills[i].x][bills[i].y] = 0;
+				continue;
+			}
+			mark[node.x][node.y] = true;
+			Q.push(node);
+			int dist = BFS();
+			grid[bills[i].x][bills[i].y] = dist;
+			memset(mark, false, sizeof(mark));
+			while (!Q.empty()){
+				Q.pop();
+			}
+		}
+		int result = 0;
+		for (int i = 1; i <= k; i++) {
+			int x = bills[i].x;
+			int y = bills[i].y;
+			int num = bills[i].num;
+			result += grid[x][y] * num;
+			//printf("grid[%d][%d]:%d\n", x, y, grid[x][y]);
+		}
+		printf("%d\n", result);
+	}
+	return 0;
+}
+//10 3 3 3 2 3 1 1 8 8 1 5 1 2 3 3 6 7 2 1 2 2 2 6 8
