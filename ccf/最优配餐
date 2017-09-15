@@ -1,0 +1,54 @@
+#include <stdio.h>
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cctype>
+using namespace std;
+string S;
+string SToLower;
+
+string lines[110];
+string linesToLower[110];
+
+string lower(string line) {
+	string result = "";
+	char c;
+	for (int i = 0; i < line.size(); i++) {
+		c = line[i];
+		if (c >= 'A' && c <= 'Z') {
+			c = c + 'a' - 'A';
+		}
+		result += c;
+	}
+	return result;
+
+}
+int main(){
+	while (cin >> S) {
+		int tag;
+		int n;
+		cin >> tag;
+		cin >> n;
+		for (int i = 0; i < n; i++) {
+			cin >> lines[i];
+			linesToLower[i] = lower(lines[i]);
+		}
+		SToLower = lower(S);
+		if (tag == 0) {
+			for (int i = 0; i < n; i++) {
+				if (linesToLower[i].find(SToLower) != string::npos) {
+					printf("%s\n", lines[i].c_str());
+				}
+			}
+		}
+
+		else {
+			for (int i = 0; i < n; i++) {
+				if (lines[i].find(S) != string::npos) {
+					printf("%s\n", lines[i].c_str());
+				}
+			}
+		}
+	}
+	return 0;
+}
