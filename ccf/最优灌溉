@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+struct Edge {
+	int a;
+	int b;
+	int dist;
+	bool operator < (const Edge &edge) const {
+		return dist < edge.dist;
+	}
+};
+
+int uf[1010];
+
+int findRoot(int n) {
+	while (uf[n] != -1) {
+		n = uf[n];
+	}
+	return n;
+}
+
+
+Edge edges[1010];
+
+int main() {
+	int n, m;
+
+	scanf("%d%d", &n, &m);
+	for (int i = 0; i <= m; i++) {
+		uf[i] = -1;
+	}
+	Edge tmpEdge;
+	for (int i = 0; i < m; i++) {
+		scanf("%d%d%d", &edges[i].a, &edges[i].b, &edges[i].dist);
+	}
+	sort(edges, edges + m);
+	int result = 0;
+	for (int i = 0; i < m; i++) {
+		int a = findRoot(edges[i].a);
+		int b = findRoot(edges[i].b);
+		if (a != b) {
+			result += edges[i].dist;
+			uf[a] = b;
+		}
+	}
+	printf("%d\n", result);
+
+	return 0;
+}
