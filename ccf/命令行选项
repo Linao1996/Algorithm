@@ -1,0 +1,156 @@
+#include <stdio.h>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+using namespace std;
+
+string lines[21];
+
+string S;
+
+
+struct Op {
+	char name;
+	string arg;
+	bool operator <(const Op &op) const {
+		return name < op.name;
+	}
+};
+struct Com {
+	string name;
+	vector<Op> ops;
+};
+
+
+Com coms[21];
+
+bool exist(char c) {
+
+	for (int i = 0; i < S.size(); i++) {
+		if (c == S[i]) {
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool hasArg(char c) {
+	for (int i = 0; i < S.size(); i++) {
+		if (c == S[i]) {
+			if (S[i + 1] == ':') {
+				return true;
+			}
+			else {
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
+Com formCom(string line) {
+	Com result;
+	Op op;
+	string::size_type pos;
+	string::size_type posl;
+	pos = line.find(" ");
+	while (pos != string::npos) {
+		if (line[pos + 1] != '-') {
+			break;
+		}
+		char name = line[pos + 2];
+		string arg;
+
+		op.name = name;
+		if (exist(name)) {
+			if (hasArg(name)) {
+				posl = line.find(" ", pos + 4);
+				if (posl == string::npos && pos + 3 != line.size()) {
+					arg = line.substr(pos + 4, line.size() - pos - 4);
+				}
+				else {
+					arg = line.substr(pos + 4, posl - pos - 4);
+				}
+				if (arg[0] != '-') {
+					op.arg = arg;
+					result.ops.push_back(op);
+					pos = posl;
+				}
+				else {//should have arg
+					break;
+				}
+			}
+			else {
+				result.ops.push_back(op);
+				pos = line.find(" ", pos + 1);
+			}
+		}//wrong op
+		else {
+			break;
+		}
+	}
+	return result;
+}
+
+int redundant(int p, int q) {
+	for (int i = 0; i < q; i++) {
+		if (coms[p].ops[i].name == coms[p].ops[q].name) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+
+
+void trim(int t) {
+	for (int i = 0; i < coms[t].ops.size(); i++) {
+		int num = redundant(t, i);
+		if (num == -1) {
+			continue;
+		}
+		else {
+			if (hasArg(coms[t].ops[num].name)) {
+				coms[t].ops[num].arg = coms[t].ops[i].arg;
+			}
+			coms[t].ops.erase(coms[t].ops.begin() + i, coms[t].ops.begin() + i + 1);
+			i--;
+		}
+	}
+}
+int n;
+
+int main() {
+
+	while (cin >> S) {
+		cin >> n;
+		cin.ignore();
+		for (int i = 0; i < n; i++) {
+		getline(cin, lines[i]);
+		coms[i] = formCom(lines[i]);
+		}
+
+		for (int i = 0; i < n; i++) {
+			trim(i);
+			sort(coms[i].ops.begin(), coms[i].ops.end());
+		}
+		for (int i = 0; i < n; i++) {
+			printf("Case %d: ", i + 1);
+			for (int j = 0; j < coms[i].ops.size(); j++) {
+				char op = coms[i].ops[j].name;
+				string arg = coms[i].ops[j].arg;
+				if (hasArg(op)) {
+					printf("-%c %s ", op, arg.c_str());
+				}
+				else {
+					printf("-%c ", op);
+				}
+			}
+			printf("\n");
+		}
+	}
+	return 0;
+}
