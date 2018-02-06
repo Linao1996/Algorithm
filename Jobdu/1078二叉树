@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <queue>
+#include <string.h>
+
+using namespace std;
+
+struct Node {
+    Node *lchild;
+    Node *rchild;
+    char c;
+};
+
+void postOrder(Node *node) {
+    if (node->lchild != NULL) {
+        postOrder(node->lchild);
+   }
+    if (node->rchild != NULL) {
+        postOrder(node->rchild);
+    }
+    printf("%c", node->c);
+}
+
+char pre[50];
+char in[50];
+
+Node *buildTree(int s1, int e1, int s2, int e2) {
+    Node *node = new Node();
+    node->rchild = NULL;
+    node->lchild = NULL;
+    int i;
+    for (i = s2; i <= e2; i++) {
+        if (in[i] == pre[s1]) {
+            node->c = pre[s1];
+            break;
+        }
+    }
+    int len1 = i - s2;
+    int len2 = e2 - i;
+    if (len1 > 0) {
+        node->lchild = buildTree(s1 + 1, s1 + len1, s2, i - 1);
+    }
+    if (len2 > 0) {
+        node->rchild = buildTree(s1 + len1 + 1, e1, i + 1, e2);
+    }
+    return node;
+}
+
+int main() {
+//    char trial[20] = {"abc"};
+//    printf("len:%d\n", strlen(trial)); //3
+    while (scanf("%s", pre) != EOF) {
+        scanf("%s", in);
+        Node *node = buildTree(0, strlen(pre) - 1, 0, strlen(in) - 1);
+        postOrder(node);
+        printf("\n");
+        delete(node);
+    }
+}
