@@ -1,0 +1,20 @@
+vector<string> letterCombinations(string digits) {
+    vector<string> res;
+    if(digits.size()==0){
+        return res;
+    }
+    res.push_back("");
+    string buf[] = {"0", "1", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+    for (int i = 0; i < digits.size(); i++) {
+        string chars = buf[digits[i] - '0'];
+        vector<string> tmp;
+        tmp.clear();
+        for (int j = 0; j < chars.size(); j++) {
+            for (int k = 0; k < res.size(); k++) {
+                tmp.push_back(res[k] + chars[j]);
+            }
+        }
+        res = tmp;
+    }
+    return res;
+}
