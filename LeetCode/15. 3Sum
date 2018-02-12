@@ -26,3 +26,4 @@ public:
     return res;
 }
 };
+//about the usage of vector in c++ :   http://blog.csdn.net/fanyun_01/article/details/56842637
