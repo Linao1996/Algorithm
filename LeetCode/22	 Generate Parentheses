@@ -1,0 +1,16 @@
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> res;
+        addParenthesis(res, "", n, 0);
+        return res;
+    }
+
+    void addParenthesis(vector<string> &res, string s, int left, int right) {
+        if (left == 0 && right == 0) {
+            res.push_back(s);
+        }
+        if (left > 0)addParenthesis(res, s + "(", left - 1, right + 1);
+        if (right > 0)addParenthesis(res, s + ")", left, right - 1);
+    }
+};
