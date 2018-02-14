@@ -1,0 +1,56 @@
+int offset[][2]{
+        1, 0,
+        -1, 0,
+        0, 1,
+        0, -1,
+};
+bool mark[1010][1010];
+class Solution {
+public:
+    
+
+void DFS(vector<vector<char>> &board, int x, int y, string word, string tmpword, bool &result) {
+    if (result)return;
+   // printf("%s\n", tmpword.c_str());
+    for (int i = 0; i < 4; i++) {
+        int nx = x + offset[i][0];
+        int ny = y + offset[i][1];
+        if (nx < 0 || nx >= board.size() || ny < 0 || ny >= board[0].size())continue;
+        if (mark[nx][ny])continue;
+        string tmpword2 = tmpword;
+        tmpword2 += board[nx][ny];
+        if (tmpword2 == word) {
+            result = true;
+            return;
+        }
+        if (tmpword2 == word.substr(0, tmpword2.size())) {
+            mark[nx][ny] = true;
+            DFS(board, nx, ny, word, tmpword2, result);
+            mark[nx][ny] = false;
+        }
+    }
+}
+
+
+bool exist(vector<vector<char>> &board, string word) {
+    for (int i = 0; i < board.size(); i++) {
+        for (int j = 0; j < board[0].size(); j++) {
+            mark[i][j] = false;
+        }
+    }
+    bool result = false;
+    for (int i = 0; i < board.size(); i++) {
+        for (int j = 0; j < board[0].size(); j++) {
+            if (board[i][j] != word[0])continue;
+            mark[i][j] = true;
+            string tmpword = ""; // but can't initialized as ""+board[i][j],and I don't know why..
+            tmpword += board[i][j];
+            if (tmpword == word)return true;
+            DFS(board, i, j, word, tmpword, result);
+            mark[i][j] = false;
+            if (result)return true;
+        }
+    }
+    return result;
+}
+};
