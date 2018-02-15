@@ -1,0 +1,19 @@
+class Solution {
+private:
+    TreeNode *pre = NULL;
+public:
+    bool isValidBST(TreeNode *root) {
+        if (!root) { return true; }
+        return isValidBST(root->left) && check(root) && isValidBST(root->right);
+    }
+
+    bool check(TreeNode *root) {
+        if (!pre) {
+            pre = root;
+            return true;
+        }
+        if (pre >= root) { return false; }
+        pre = root;
+        return true;
+    }
+};
