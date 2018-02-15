@@ -12,7 +12,7 @@ public:
             pre = root;
             return true;
         }
-        if (pre >= root) { return false; }
+        if (pre->val >= root->val) { return false; }
         pre = root;
         return true;
     }
