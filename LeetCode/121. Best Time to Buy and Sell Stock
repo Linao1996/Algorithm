@@ -1,0 +1,22 @@
+class Solution {
+public:
+    int maxProfit(vector<int> &prices) {
+        vector<int> diff(prices.size(), 0);
+        for (int i = 1; i < prices.size(); i++) {
+            diff[i] = prices[i] - prices[i - 1];
+        }
+        int max = -INFINITY;
+        int tmpMax = 0;
+        for (int i = 1; i < diff.size(); i++) {
+            tmpMax += diff[i];
+            if (tmpMax < 0) {
+                tmpMax = 0;
+                continue;
+            }
+            if (tmpMax > max) {
+                max = tmpMax;
+            }
+        }
+        return max>0?max:0;
+    }
+};
