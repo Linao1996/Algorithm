@@ -1,0 +1,19 @@
+class Solution {
+public:
+    bool hasCycle(ListNode *head) {
+        ListNode *walker = head;
+        if (!walker) { return false; }
+        ListNode *runner = walker->next;
+        while (walker->next && runner->next) {
+            walker = walker->next;
+            runner = runner->next->next;
+            if (walker == runner) {
+                return true;
+            }
+            if(!walker || !runner){
+                return false;
+            }
+        }
+        return false;
+    }
+};
