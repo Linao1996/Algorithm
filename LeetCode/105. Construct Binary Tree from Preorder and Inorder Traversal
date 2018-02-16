@@ -1,0 +1,19 @@
+class Solution {
+public:
+    TreeNode *buildTree(vector<int> &preorder, vector<int> &inorder) {
+        return helper(preorder, 0, preorder.size(), inorder, 0, inorder.size());
+    }
+
+    TreeNode *helper(vector<int> &preorder, int i, int j, vector<int> &inorder, int ii, int jj) {
+        if (i >= j || ii >= jj) {
+            return NULL;
+        }
+        int rootVal = preorder[i];
+        auto pos = find(inorder.begin() + ii, inorder.begin() + jj, rootVal);
+        int dis = pos - inorder.begin() - ii;
+        TreeNode *root = new TreeNode(rootVal);
+        root->left = helper(preorder, i + 1, i + dis + 1, inorder, ii, ii + dis);
+        root->right = helper(preorder, i + dis + 1, j, inorder, ii + dis + 1, jj);
+        return root;
+    }
+};
