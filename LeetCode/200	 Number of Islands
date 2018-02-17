@@ -1,0 +1,45 @@
+ bool mark[1010][1010];
+    int offset[][2] = {
+            0, 1,
+            0, -1,
+            1, 0,
+            -1, 0,
+    };
+class Solution {
+private:
+   
+public:
+    int numIslands(vector<vector<char>> &grid) {
+        int res = 0;
+        if(grid.empty()){
+            return 0;
+        }
+
+        for (int i = 0; i <= grid.size(); i++) {
+            for (int j = 0; j <= grid[0].size(); j++) {
+                mark[i][j] = false;
+            }
+        }
+        for (int i = 0; i < grid.size(); i++) {
+            for (int j = 0; j <grid[0].size(); j++) {
+                if (!mark[i][j] && grid[i][j] == '1') {
+                    res++;
+                    mark[i][j] = true;
+                    DFS(grid, i, j);
+                }
+            }
+        }
+        return res;
+    }
+void DFS(vector<vector<char>> &grid, int x, int y) {
+    for (int i = 0; i < 4; i++) {
+        int nx = x + offset[i][0];
+        int ny = y + offset[i][1];
+        if (nx < 0 || ny < 0 || nx >= grid.size() || ny >= grid[0].size())continue;
+        if (mark[nx][ny])continue;
+        if (grid[nx][ny] == '0')continue;
+        mark[nx][ny] = true;
+        DFS(grid, nx, ny);
+    }
+}
+};
