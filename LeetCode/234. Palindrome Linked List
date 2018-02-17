@@ -1,0 +1,17 @@
+class Solution {
+public:
+    bool isPalindrome(ListNode *head) {
+        return check(head, head);
+    }
+
+    bool check(ListNode *&head, ListNode *p) {
+        if (!p)return true;
+        bool res = true;
+        res = check(head,p->next) && res;
+        if(head->val != p->val){
+            return false;
+        }
+        head = head->next;
+        return res;
+    }
+};
