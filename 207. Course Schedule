@@ -1,0 +1,37 @@
+vector<int> edges[2010];
+int indegree[2010];
+queue<int> Q;
+
+class Solution {
+public:
+    bool canFinish(int numCourses, vector<pair<int, int>> &prerequisites) {
+        for (int i = 0; i <= numCourses; i++) {
+            edges[i].clear();
+            indegree[i] = 0;
+        }
+        for (int i = 0; i < prerequisites.size(); i++) {
+            int a = prerequisites[i].first;
+            int b = prerequisites[i].second;
+            edges[b].push_back(a);
+            indegree[a]++;
+        }
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] == 0) {
+                Q.push(i);
+            }
+        }
+        int res = 0;
+        while (!Q.empty()) {
+            res++;
+            int tmp = Q.front();
+            Q.pop();
+            for (int i = 0; i < edges[tmp].size(); i++) {
+                indegree[edges[tmp][i]]--;
+                if(indegree[edges[tmp][i]] == 0){
+                    Q.push(edges[tmp][i]);
+                }
+            }
+        }
+        return res == numCourses;
+    }
+};
