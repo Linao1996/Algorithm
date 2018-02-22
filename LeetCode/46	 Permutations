@@ -37,3 +37,28 @@ public:
         return true;
     }
 };
+
+\\\\\\\\\\\\ A more intuitive way!
+class Solution {
+public:
+    vector<vector<int>> permute(vector<int> &nums) {
+        vector<int> tmp;
+        vector<vector<int>> res;
+        DFS(nums, tmp, res);
+        return res;
+    }
+
+    void DFS(vector<int> nums, vector<int> &tmp, vector<vector<int>> &res) {
+        if (tmp.size() == nums.size()) {
+            res.push_back(tmp);
+            return;
+        }
+        for (int i = 0; i < nums.size(); i++) {
+            if (find(tmp.begin(), tmp.end(), nums[i]) == tmp.end()) {
+                tmp.push_back(nums[i]);
+                DFS(nums, tmp, res);
+                tmp.pop_back();
+            }
+        }
+    }
+};
