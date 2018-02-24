@@ -1,0 +1,23 @@
+class Solution {
+public:
+    int rob(TreeNode *root) {
+        map<TreeNode *, int> map;
+        return robSub(root, map);
+    }
+
+private:
+    int robSub(TreeNode *root, map<TreeNode *, int> &map) {
+        if (!root)return 0;
+        if (map[root]) return map[root];
+        int val = 0;
+        if (root->left) {
+            val += robSub(root->left->left, map) + robSub((root->left->right), map);
+        }
+        if (root->right) {
+            val += robSub(root->right->right, map) + robSub(root->right->left, map);
+        }
+        int res = max(root->val + val, robSub(root->left, map) + robSub(root->right, map));
+        map[root] = res;
+        return res;
+    }
+};
