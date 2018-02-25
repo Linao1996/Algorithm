@@ -1,0 +1,14 @@
+
+class Solution {
+public:
+    int diameterOfBinaryTree(TreeNode *root) {
+        if (!root) return 0;
+        int sum = depth(root->left) + depth(root->right);
+        return max(sum, max(diameterOfBinaryTree(root->left), diameterOfBinaryTree(root->right)));
+    }
+
+    int depth(TreeNode *root) {
+        if (!root)return 0;
+        return max(depth(root->left), depth(root->right)) + 1;
+    }
+};
