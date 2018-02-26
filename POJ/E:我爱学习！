@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <string>
+#include <algorithm>
+#include <vector>
+#include <iostream>
+
+using namespace std;
+
+
+int main() {
+    int n, m;
+    scanf("%d%d", &n, &m);
+    vector<string> words(n, "");
+    vector<string> sens(m, "");
+    for (int i = 0; i < n; i++) {
+        cin >> words[i];
+    }
+    cin.ignore();
+    for (int i = 0; i < m; i++) {
+        getline(cin, sens[i]);
+    }
+    for (int i = 0; i < m; i++) {
+        for (int j = 0; j < n; j++) {
+            string word = words[j];
+            string::size_type pos = sens[i].find(word);
+            if (pos != string::npos) {
+                string to = "";
+                for (int k = 0; k < word.size(); k++) {
+                    to += "*";
+                }
+                sens[i].replace(pos, word.size(),to);
+            }
+        }
+    }
+    for(int i = 0;i < m;i++){
+        printf("%s\n",sens[i].c_str());
+    }
+}
+
