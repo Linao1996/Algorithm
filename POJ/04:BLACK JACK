@@ -1,0 +1,109 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+vector<int> my(10, 0);
+vector<int> his(10, 0);
+
+int sum(vector<int> vec, int x) {
+    int sum = 0;
+    for (int i = 0; i < x; i++) {
+        sum += vec[i];
+    }
+    return sum;
+}
+
+int main() {
+    int n, m;
+    cin >> n;
+    for (int i = 0; i < n; i++) {
+        string c;
+        cin >> c;
+        if (c.size() == 1) {
+            if (c[0] >= '2' && c[0] <= '9') {
+                my[i] = c[0] - '0';
+            } else if (c[0] == 'A') {
+                if (sum(my, i) > 10) {
+                    my[i] = 1;
+                } else {
+                    my[i] = 11;
+                }
+            } else {
+                my[i] = 10;
+            }
+        } else {
+            my[i] = 10;
+        }
+    }
+    cin >> m;
+//    printf("m:%d\n", m);
+    for (int i = 0; i < m; i++) {
+        string c;
+        cin >> c;
+        if (c.size() == 1) {
+            if (c[0] >= '2' && c[0] <= '9') {
+                his[i] = c[0] - '0';
+            } else if (c[0] == 'A') {
+                if (sum(his, i) > 10) {
+                    his[i] = 1;
+                } else {
+                    his[i] = 11;
+                }
+            } else {
+                his[i] = 10;
+            }
+        } else {
+            his[i] = 10;
+        }
+    }
+
+    ////
+
+    int mySum = sum(my, n);
+    int hisSum = sum(his, m);
+//    printf("mySum:%d\n",mySum);
+//    printf("hisSum:%d\n",hisSum);
+    bool myBlack = false;
+    bool hisBlack = false;
+    if (n == 2 && (find(my.begin(), my.end(), 11) != my.end() || find(my.begin(), my.end(), 1) != my.end()) &&
+        find(my.begin(), my.end(), 10) != my.end()) {
+        myBlack = true;
+    }
+
+    if (m == 2 &&
+        (find(his.begin(), his.end(), 11) != his.end() || find(his.begin(), his.end(), 1) != his.end()) &&
+        find(his.begin(), his.end(), 10) != his.end()) {
+        hisBlack = true;
+    }
+
+
+    if (hisSum > 21) {
+        printf("win\n");
+//        printf("1\n");
+//        printf("hisSum:%d\n", hisSum);
+    } else if (mySum > 21) {
+        printf("lose\n");
+//        printf("2\n");
+    } else if (myBlack && !hisBlack) {
+        printf("win\n");
+//        printf("3\n");
+    } else if (!myBlack && hisBlack) {
+        printf("lose\n");
+//        printf("4\n");
+    } else if (myBlack && hisBlack) {
+        printf("draw\n");
+//        printf("5\n");
+    } else if (mySum > hisSum) {
+        printf("win\n");
+//        printf("6\n");
+    } else if (mySum < hisSum) {
+        printf("lose\n");
+//        printf("7\n");
+    } else if (mySum == hisSum) {
+        printf("draw\n");
+//        printf("8\n");
+    }
+}
