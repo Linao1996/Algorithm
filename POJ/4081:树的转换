@@ -59,3 +59,50 @@ int main() {
         printf("%d => %d\n", before, after);
     }
 }
+
+
+
+//////////////////////////// 正确的AC代码，然而我理解不了。。。。
+#include <iostream>
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+#include <queue>
+#include <functional>
+#include <cctype>
+#include <cmath>
+using namespace std;
+
+const int N = 100100;
+char s[N];
+int res1, res2;
+
+void dfs(int &i, int dep1, int dep2)
+{
+    res1 = max(res1, dep1);
+    res2 = max(res2, dep2);
+    int cnt  = 1;
+    while(s[i])
+    {
+        if(s[i] == 'd')
+            dfs(++i, dep1 + 1, dep2 + cnt), cnt++;
+        else
+        {
+            i++;
+            return;
+        }
+    }
+}
+
+
+int main()
+{
+    while(~ scanf(" %s", s))
+    {
+        int i = 0;
+        res1 = res2 = -1;
+        dfs(i, 0, 0);
+        printf("%d => %d\n", res1, res2);
+    }
+    return 0;
+}
