@@ -1,0 +1,64 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+
+using namespace std;
+
+int map[200];
+
+int findRoot(int c) {
+    if (map[c] == -1) {
+        return c;
+    }
+    int root = findRoot(map[c]);
+    map[c] = root;
+    return root;
+}
+
+
+struct Edge {
+    char a;
+    char b;
+    int cost;
+
+    bool operator<(const Edge &edge) const {
+        return cost < edge.cost;
+    }
+} edges[500];
+
+
+int main() {
+    for (int i = 0; i < 200; i++) {
+        map[i] = -1;
+    }
+    int n;
+    scanf("%d", &n);
+    int edgeCount = 0;
+    for (int i = 0; i < n-1; i++) {
+        char node;
+        int num;
+        cin >> node >> num;
+        for (int j = 0; j < num; j++) {
+            char node2;
+            int cost;
+            cin >> node2 >> cost;
+            edges[edgeCount].a = node;
+            edges[edgeCount].b = node2;
+            edges[edgeCount].cost = cost;
+            edgeCount++;
+        }
+    }
+    sort(edges, edges + edgeCount);
+    int res=0;
+    for (int i = 0; i < edgeCount; i++) {
+        int na = findRoot(edges[i].a);
+        int nb = findRoot(edges[i].b);
+        if(na != nb){
+            res +=edges[i].cost;
+            map[na] = nb;
+        }
+    }
+    printf("%d\n",res);
+
+}
