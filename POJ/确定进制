@@ -1,3 +1,5 @@
+//k进制数字各位必须小于k
+
 #include <stdio.h>
 #include <string>
 #include <algorithm>
