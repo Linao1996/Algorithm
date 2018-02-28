@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <map>
+
+using namespace std;
+
+vector<int> inDegree(1000, 0);
+vector<int> outDegree(1000, 0);
+vector<int> node;
+
+
+void judge(int num) {
+    bool isTree = true;
+    int rootCount = 0;
+    for (int i = 0; i < node.size(); i++) {
+//        printf("inDegree[%d]:%d\n",node[i],inDegree[node[i]]);
+        if (inDegree[node[i]] == 0) {
+            rootCount++;
+        }
+        if (inDegree[node[i]] > 1) {
+//            printf("inDegree[%d] > 1\n", node[i]);
+            isTree = false;
+            break;
+        }
+    }
+    if (rootCount != 1) {
+        isTree = false;
+    }
+    if (isTree) {
+        printf("Case %d is a tree.\n", num);
+    } else {
+        printf("Case %d is not a tree.\n", num);
+    }
+}
+
+int main() {
+    int a, b;
+    int num = 0;
+    while (scanf("%d%d", &a, &b) != EOF) {
+        if (a == -1 && b == -1)return 0;
+        if (a == 0 && b == 0) {
+            num++;
+            if (node.empty()) {
+                printf("Case %d is a tree.\n", num);
+            } else {
+                judge(num);
+                for (int i = 0; i < node.size(); i++) {
+                    inDegree[node[i]] = 0;
+                    outDegree[node[i]] = 0;
+                }
+                node.clear();
+            }
+            continue;
+        }
+        if (find(node.begin(), node.end(), a) == node.end()) {
+            node.push_back(a);
+        }
+        if (find(node.begin(), node.end(), b) == node.end()) {
+            node.push_back(b);
+        }
+//        printf("a:%d b:%d\n",a,b);
+        inDegree[b]++;
+        outDegree[a]++;
+//        printf("inDegree[%d]:%d\n",b,inDegree[b]);
+    }
+}
