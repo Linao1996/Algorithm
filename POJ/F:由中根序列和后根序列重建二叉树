@@ -19,14 +19,14 @@ void preOrder(TreeNode *root) {
 }
 
 TreeNode *buildTree(int mid[], int i, int j, int post[], int ii, int jj) { // [)
-    if (i <= j) {
+    if (i >= j) {
         return NULL;
     }
     TreeNode *root = new TreeNode;
-    root->val = post[jj];
+    root->val = post[jj - 1];
     int k;
     for (k = i; k < j; k++) {
-        if (mid[k] == post[jj]) {
+        if (mid[k] == post[jj - 1]) {
             break;
         }
     }
@@ -37,34 +37,20 @@ TreeNode *buildTree(int mid[], int i, int j, int post[], int ii, int jj) { // [)
     return root;
 }
 
-int mid[65536];
-int post[65536];
+int mid[1000];
+int post[1000];
 
 int main() {
     int count = 0;
-    int num;
-    while (1) {
-        num = -1;
-        scanf("%d ", &num);
-        mid[count++] = num;
-        if (num == -1) {
-            scanf("%d",&num);
-            mid[count] = num;
-            break;
-        }
+    int d = 0;
+    char c = 0;
+    while (true) {
+        scanf("%d%c", &d, &c);
+        mid[count++] = d;
+        if (c == '\n')break;
     }
-    count = 0;
-    while(1){
-        num = -1;
-        scanf("%d ",&num);
-        mid[count++] = num;
-        if(num == -1){
-            scanf("%d",&num);
-            mid[count++] = num;
-            break;
-        }
+    for (int i = 0; i < count; i++) {
+        scanf("%d", &post[i]);
     }
-    printf("here\n");
-
     preOrder(buildTree(mid, 0, count, post, 0, count));
 }
