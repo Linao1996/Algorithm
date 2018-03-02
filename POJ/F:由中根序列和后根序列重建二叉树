@@ -1,0 +1,70 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+};
+
+
+void preOrder(TreeNode *root) {
+    if (!root)return;
+    printf("%d ", root->val);
+    preOrder(root->left);
+    preOrder(root->right);
+}
+
+TreeNode *buildTree(int mid[], int i, int j, int post[], int ii, int jj) { // [)
+    if (i <= j) {
+        return NULL;
+    }
+    TreeNode *root = new TreeNode;
+    root->val = post[jj];
+    int k;
+    for (k = i; k < j; k++) {
+        if (mid[k] == post[jj]) {
+            break;
+        }
+    }
+    int leftLen = k - i;
+    int rightLen = j - k - 1;
+    root->left = buildTree(mid, i, i + leftLen, post, ii, ii + leftLen);
+    root->right = buildTree(mid, i + leftLen + 1, j, post, ii + leftLen, jj - 1);
+    return root;
+}
+
+int mid[65536];
+int post[65536];
+
+int main() {
+    int count = 0;
+    int num;
+    while (1) {
+        num = -1;
+        scanf("%d ", &num);
+        mid[count++] = num;
+        if (num == -1) {
+            scanf("%d",&num);
+            mid[count] = num;
+            break;
+        }
+    }
+    count = 0;
+    while(1){
+        num = -1;
+        scanf("%d ",&num);
+        mid[count++] = num;
+        if(num == -1){
+            scanf("%d",&num);
+            mid[count++] = num;
+            break;
+        }
+    }
+    printf("here\n");
+
+    preOrder(buildTree(mid, 0, count, post, 0, count));
+}
