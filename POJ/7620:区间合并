@@ -1,0 +1,42 @@
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+
+using namespace std;
+
+struct Area {
+    int a;
+    int b;
+
+    bool operator<(const Area &area) const {
+        return a < area.a;
+    }
+} areas[50010];
+
+int main() {
+    int n;
+    scanf("%d", &n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d%d", &areas[i].a, &areas[i].b);
+    }
+    sort(areas, areas + n);
+    bool can = true;
+    for (int i = 1; i < n; i++) {
+        if (areas[i].a > areas[i - 1].b) {
+            can = false;
+            break;
+        } else {
+            if (areas[i].b >= areas[i - 1].b) {
+                areas[i].a = areas[i - 1].a;
+            } else {
+                areas[i].a = areas[i - 1].a;
+                areas[i].b = areas[i - 1].b;
+            }
+        }
+    }
+    if (!can) {
+        printf("no\n");
+    } else {
+        printf("%d %d\n", areas[n - 1].a, areas[n - 1].b);
+    }
+}
