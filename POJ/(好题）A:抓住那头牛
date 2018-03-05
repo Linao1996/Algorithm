@@ -1,0 +1,73 @@
+#include<iostream>
+#include<algorithm>
+#include <queue>
+using namespace std;
+
+struct State {
+	int pos;
+	int len;
+};
+
+queue<State> Q;
+int n, k;
+bool mark[100010];
+
+
+int BFS() {
+	while (!Q.empty()) {
+		State now = Q.front();
+		Q.pop();
+		int pos = now.pos;
+		//printf("%d\n", pos);
+		int len = now.len;
+		if(pos == k){
+			return len; 
+		}
+		
+		int npos1 = pos + 1;
+		int npos2 = pos - 1;
+		int npos3 = pos * 2;
+		int nlen = len + 1;
+		if (npos1 == k || npos2 == k || npos3 == k) {
+			return nlen;
+		}
+		State s1, s2, s3;
+		if (pos < k && npos1 >= 0 && npos1 <= 100000 && !mark[npos1]) {
+			s1.pos = npos1;
+			s1.len = nlen;
+			mark[npos1] = true;
+			Q.push(s1);
+		}	
+		if (npos2 >= 0 && npos2 <= 100000 && !mark[npos2]) {
+			s2.pos = npos2;
+			s2.len = nlen;
+			mark[npos2] = true;
+			Q.push(s2);
+		}
+		if (pos < k && npos3 >= 0 && npos3 <= 100000 && !mark[npos3]) {
+			s3.pos = npos3;
+			s3.len = nlen;
+			mark[npos3] = true;
+			Q.push(s3);
+		}
+	}
+}
+
+int main() {
+
+	while (cin >> n >> k) {
+		while(!Q.empty()){
+			Q.pop();
+		}
+		for(int i =0 ;i <= 100000;i++){
+			mark[i] = false;
+		}
+		State s;
+		s.pos = n;
+		s.len = 0;
+		mark[n] = true;
+		Q.push(s);
+		int res = BFS();
+		printf("%d\n", res);
+	}
+}
