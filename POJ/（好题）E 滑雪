@@ -1,0 +1,61 @@
+感想：
+1、dp本质就是用表格记录结果，避免重复计算。
+2、本题的dp新在没有特定搜索方向，向四周扩展神搜直到遇到dp起点为止
+
+#include <stdio.h>
+#include <iostream>
+#include <algorithm>
+using namespace std;
+
+int maze[110][110];
+int dp[110][110];
+int R, C;
+
+int offset[][2] = {
+	1,0,
+	-1,0,
+	0,1,
+	0,-1,
+};
+
+int  DFS(int x, int y) {
+	if (dp[x][y] != 0) {
+		return dp[x][y];
+	}
+	for (int i = 0; i < 4; i++) {
+		int nx = x + offset[i][0];
+		int ny = y + offset[i][1];
+		if (nx < 0 || nx >= R || ny < 0 || ny >= C) {
+			continue;
+		}
+		if (maze[nx][ny] < maze[x][y]) {
+			dp[x][y] = max(dp[x][y], DFS(nx, ny) + 1);
+		}
+	}
+	dp[x][y] = dp[x][y] == 0 ? 1 : dp[x][y];
+	//printf("dp[%d][%d]:%d\n", x, y, dp[x][y]);
+	return dp[x][y];
+}
+
+
+int main() {
+	cin >> R >> C;
+	for (int i = 0; i < R; i++) {
+		for (int j = 0; j < C; j++) {
+			cin >> maze[i][j];
+			dp[i][j] = 0;
+		}
+	}
+	for (int i = 0; i < R; i++) {
+		for (int j = 0; j < C; j++) {
+			DFS(i, j);
+		}
+	}
+	int res = 0;
+	for (int i = 0; i < R; i++) {
+		for (int j = 0; j < C; j++) {
+			res = max(res, dp[i][j]);
+		}
+	}
+	printf("%d\n", res);
+}
